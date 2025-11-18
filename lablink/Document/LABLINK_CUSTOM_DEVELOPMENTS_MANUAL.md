@@ -1,839 +1,764 @@
-# 📘 LabLink Custom Developments - User Manual
+# 📘 LabLink Custom Features - User Guide
 
 <div align="center">
 
 ![Odoo](https://img.shields.io/badge/Odoo-18.0-714B67?style=for-the-badge&logo=odoo&logoColor=white)
-![Custom](https://img.shields.io/badge/Custom-Developments-success?style=for-the-badge)
+![User Guide](https://img.shields.io/badge/User-Friendly-success?style=for-the-badge)
 
-**Guide to LabLink Custom Features & Extensions**
+**Your Guide to LabLink Custom Features**
 
-*This manual assumes you have working knowledge of standard Odoo 18*
+*Simple, practical instructions for using LabLink's custom enhancements*
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📋 What's New in Your System?
 
-1. [Custom Modules Overview](#-custom-modules-overview)
-2. [Multi-Level Approval System](#-multi-level-approval-system)
-3. [Partner Extensions](#-partner-extensions)
-4. [Product Extensions](#-product-extensions)
-5. [CRM Automation](#-crm-automation)
-6. [Sales Order Enhancements](#-sales-order-enhancements)
-7. [Sales Order Validations](#-sales-order-validations)
-8. [Email Thread Continuity](#-email-thread-continuity)
-9. [Sri Lankan Tax Configuration](#-sri-lankan-tax-configuration)
-10. [Custom Fields Reference](#-custom-fields-reference)
+This guide covers the **custom features** added specifically for LabLink. We assume you already know how to use standard Odoo.
 
----
-
-## 🧩 Custom Modules Overview
-
-### Installed Custom Modules (13 modules)
+### 🎯 Key Custom Features
 
 ```mermaid
 graph TB
-    A[Approval Framework] --> B[centrics_approval_process_base]
-    A --> C[centrics_multi_level_approval_process]
-    A --> D[centrics_partner_multi_approval_process]
-    A --> E[centrics_product_approval_process]
-
-    F[LabLink Extensions] --> G[lablink_base_extend]
-    F --> H[lablink_crm_extend]
-    F --> I[lablink_sales_extend]
-    F --> J[lablink_mail_thread]
-    F --> K[lablink_custom_development]
-
-    L[Supporting Modules] --> M[sales_validations]
-    L --> N[local_tax_config]
-    L --> O[bi_product_brand]
-    L --> P[one2many_sequence_sf]
+    A[LabLink Custom Features] --> B[Multi-Level Approvals]
+    A --> C[Enhanced Partner Management]
+    A --> D[Enhanced Product Management]
+    A --> E[CRM Automation]
+    A --> F[Advanced Sales Features]
+    A --> G[Sales Order Validations]
+    A --> H[Email Thread Continuity]
+    A --> I[Sri Lankan Tax Types]
 
     style A fill:#714B67,stroke:#fff,stroke-width:2px,color:#fff
-    style F fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
-    style L fill:#1565C0,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#1565C0,stroke:#fff,stroke-width:2px,color:#fff
 ```
+
+---
+
+## 📋 Table of Contents
+
+1. [Getting Started](#-getting-started)
+2. [Multi-Level Approval System](#-multi-level-approval-system)
+3. [Enhanced Partner Management](#-enhanced-partner-management)
+4. [Enhanced Product Management](#-enhanced-product-management)
+5. [CRM Automation Features](#-crm-automation-features)
+6. [Advanced Sales Features](#-advanced-sales-features)
+7. [Sales Order Validations](#-sales-order-validations)
+8. [Email Thread Continuity](#-email-thread-continuity)
+9. [Sri Lankan Tax Configuration](#-sri-lankan-tax-configuration)
+10. [Quick Reference Guide](#-quick-reference-guide)
+
+---
+
+## 🚀 Getting Started
+
+### What You Need to Know
+
+**Before using these features:**
+- You should be comfortable with basic Odoo operations
+- These features are **additions** to standard Odoo
+- Your administrator should have already configured the system
+
+### Who Uses What?
+
+| Your Role | You'll Use |
+|-----------|-----------|
+| **Administrator** | All configuration settings, approval setups |
+| **Approver** | Approval features for partners, products, sales |
+| **Sales Team** | Enhanced quotations, CRM automation, email threading |
+| **Finance Team** | Sales validations, tax types, credit monitoring |
 
 ---
 
 ## 🔐 Multi-Level Approval System
 
-### Overview
+### What Is This?
 
-A reusable approval framework that adds multi-level approval workflows to Partners, Products, and Sales Orders.
+A flexible approval system where items can go through 1, 2, or 3 levels of approval before being finalized.
 
-### Key Concepts
+**Used For:**
+- Approving new customers/vendors
+- Approving new products
+- Approving sales orders (under certain conditions)
 
-**Approval Levels:**
-- Support for 1, 2, or 3 approval levels
-- Each level can have multiple approvers
-- Configurable approval method per level
-
-**Approval Methods:**
-| Method | Description |
-|--------|-------------|
-| **All Must Approve** | Every user in the level must approve |
-| **Any Can Approve** | One user's approval is sufficient |
-
-### Configuration Path
-`Settings → Multi Approvals → Approval Level Configuration`
-
-### Creating Approval Configuration
-
-```yaml
-Name: "Partner Approval - 2 Levels"
-Model: Contact (res.partner)
-Level of Approval: 2
-Should Approve All (Level 1): No (Any can approve)
-Should Approve All (Level 2): Yes (All must approve)
-
-First Level Approval Users:
-  - Sales Manager
-
-Second Level Approval Users:
-  - Finance Manager
-  - Operations Manager
-```
-
-### Approval State Flow
+### Approval Flow Visualization
 
 ```mermaid
 stateDiagram-v2
-    [*] --> draft
-    draft --> waiting_approve: Request Approval
-    waiting_approve --> first_level_approved: Level 1 Approves
-    waiting_approve --> draft: Rejected
-    first_level_approved --> second_level_approved: Level 2 Approves
-    first_level_approved --> draft: Rejected
-    second_level_approved --> third_level_approved: Level 3 Approves
-    second_level_approved --> draft: Rejected
-    third_level_approved --> approved
-    second_level_approved --> approved: (If only 2 levels)
-    first_level_approved --> approved: (If only 1 level)
+    [*] --> Draft: Create
+    Draft --> Level1: Request Approval
+    Level1 --> Level2: Level 1 Approves
+    Level2 --> Level3: Level 2 Approves
+    Level3 --> Approved: Level 3 Approves
+    Level2 --> Approved: (if only 2 levels)
+    Level1 --> Approved: (if only 1 level)
 
-    note right of approved
-        Final approved state
-        Record can be used in
-        business processes
+    Level1 --> Draft: Rejected
+    Level2 --> Draft: Rejected
+    Level3 --> Draft: Rejected
+
+    note right of Approved
+        ✓ Ready to use
     end note
 ```
 
-### Approval Tracking Fields
+### How to Configure Approval Levels
 
-Every model using approval framework gets these fields:
+**Path:** `Settings → Multi Approvals → Approval Level Configuration`
 
-```yaml
-Request Tracking:
-  - ct_approval_requested_by: User who requested
-  - ct_approval_requested_date: When requested
-  - ct_approval_requested_users: List of approvers
+**Steps:**
 
-Approval Tracking:
-  - ct_approved_by: User who approved
-  - ct_approved_date: When approved
-  - ct_approved_note: Approval notes
+1. **Click Create**
 
-Rejection Tracking:
-  - ct_rejected_by: User who rejected
-  - ct_rejected_date: When rejected
-  - ct_rejected_note: Rejection reason
+2. **Basic Setup:**
+   - **Name:** Give it a clear name (e.g., "Partner Approval - 2 Levels")
+   - **Model:** Choose what needs approval (Partners or Products)
+   - **Level of Approval:** Choose 1, 2, or 3 levels
 
-Multi-Level Tracking:
-  - Approval History: Details of each level approval
+3. **Add Approvers for Each Level:**
+
+   **Level 1:**
+   - Click "Add" under "First Level Approval"
+   - Select users who can approve at first level
+   - Check "Should Approve All" if EVERY person must approve
+   - Leave unchecked if ANY ONE person's approval is enough
+
+   **Level 2 (if needed):**
+   - Click "Add" under "Second Level Approval"
+   - Select level 2 approvers
+   - Set approval method (All or Any)
+
+   **Level 3 (if needed):**
+   - Click "Add" under "Third Level Approval"
+   - Select level 3 approvers
+   - Set approval method (All or Any)
+
+4. **Save**
+
+**Example Configuration:**
+```
+Configuration: Partner Approval - 2 Levels
+
+Level 1:
+  Approvers: Sales Manager
+  Method: Any can approve
+
+Level 2:
+  Approvers: Finance Manager, Operations Manager
+  Method: All must approve
 ```
 
----
-
-## 👥 Partner Extensions
-
-### Custom Fields Added to `res.partner`
-
-#### 1. Customer Classification
-
-| Field | Type | Purpose | Location |
-|-------|------|---------|----------|
-| `customer_type` | Selection | Government/Private classification | Sales & Purchase tab |
-| `customer_type_sscl` | Many2one | Additional SSCL classification | Sales & Purchase tab |
-| `business_nature` | Many2one | Hospital/Lab/Research etc. | Sales & Purchase tab |
-| `type_of_business` | Char | Free text business description | Sales & Purchase tab |
-| `grn_type` | Selection | Local/Import/Service | Sales & Purchase tab |
-
-**Configuration Required:**
-- Create Business Nature: `Settings → Lablink Configuration → Business Nature`
-- Create Customer Type SSCL: `Settings → Lablink Configuration → Customer Type`
-
-#### 2. Sales Configuration
-
-| Field | Purpose |
-|-------|---------|
-| `quotation_officer` | Default salesperson for this customer |
-| `commission` | Default commission rate (%) |
-
-#### 3. Tax Configuration
-
-| Field | Options | Impact |
-|-------|---------|--------|
-| `vat_type` | VAT / SVAT / Non-VAT / GST | Auto-applied to sales orders |
-
-#### 4. Document Management
-
-```yaml
-Upload Fields:
-  - business_reg_attachments: Business registration documents
-  - vat_reg_attachments: VAT registration documents
-  - customer_reg_attachments: Customer registration documents
-
-Tracking Fields:
-  - partner_document_status: Valid / Beyond Period
-  - no_of_days: Days since partner creation
-  - configured_period: Grace period for document upload
-```
-
-**Document Validity Logic:**
+### Understanding Approval Methods
 
 ```mermaid
 graph TD
-    A[Partner Approved] --> B{Documents Uploaded?}
-    B -->|Yes| C[Status: Approved ✓]
-    B -->|No| D[Status: Pending Document]
-    D --> E{Within Grace Period?}
-    E -->|Yes| F[Wait for Documents]
-    E -->|No| G[Status: Approved Without Document]
-    F --> H{Documents Uploaded}
-    H -->|Yes| C
-    H -->|Period Expired| G
+    A[Approval Level with 3 Users] --> B{Approval Method?}
 
-    style C fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
-    style D fill:#F57C00,stroke:#fff,stroke-width:2px,color:#fff
-    style G fill:#C62828,stroke:#fff,stroke-width:2px,color:#fff
+    B -->|All Must Approve| C[User 1 Approves]
+    C --> D[User 2 Approves]
+    D --> E[User 3 Approves]
+    E --> F[✓ Level Complete]
+
+    B -->|Any Can Approve| G[ANY User Approves]
+    G --> H[✓ Level Complete]
+
+    style F fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
+    style H fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-**Configuration:**
-`Settings → General Settings → Partner Document Validate Period` (Default: 14 days)
+| Method | What It Means | When to Use |
+|--------|---------------|-------------|
+| **All Must Approve** | Every selected person must approve | Important decisions requiring consensus |
+| **Any Can Approve** | Just one person's approval is enough | Routine approvals |
 
-#### 5. Credit Management
+---
 
-| Field | Type | Calculation |
-|-------|------|-------------|
-| `credit_limit` | Monetary | Manually set |
-| `remaining_credit_limit` | Monetary (computed) | Credit Limit - Unpaid Invoices |
+## 👥 Enhanced Partner Management
+
+### New Partner Fields
+
+When creating or editing a partner, you'll see these additional fields:
+
+#### Customer Classification Section
+
+**Purpose:** Better categorize your customers
+
+| Field | What It's For | Example |
+|-------|---------------|---------|
+| **Customer Type** | Government or Private sector | Government |
+| **Customer Type SSCL** | Additional classification | Public Health Institution |
+| **Business Nature** | Type of organization | Hospital |
+| **Type of Business** | Business description | Multi-specialty Hospital |
+| **GRN Type** | Goods receipt type | Local |
+
+**How to Configure:**
+- `Settings → Lablink Configuration → Business Nature` - Add options like Hospital, Laboratory, Research Institute
+- `Settings → Lablink Configuration → Customer Type` - Add your custom classifications
+
+#### Sales Configuration Section
+
+| Field | What It's For |
+|-------|---------------|
+| **Quotation Officer** | Default salesperson for this customer |
+| **Commission (%)** | Default commission rate |
+
+#### Tax Configuration
+
+| Field | Options | What It Does |
+|-------|---------|--------------|
+| **VAT Type** | VAT / SVAT / Non-VAT / GST | Automatically applies correct tax to sales orders |
+
+> **💡 Tip:** Government customers typically use SVAT (8%) instead of VAT (18%)
+
+#### Document Management
+
+**Three document upload sections:**
+- **Business Registration Documents**
+- **VAT Registration Documents**
+- **Customer Registration Documents**
+
+**Document Grace Period:**
+- System tracks how long documents are pending
+- Configurable grace period (default 14 days)
+- Status changes if documents not uploaded in time
+
+**Configure Grace Period:**
+`Settings → General Settings → Partner Document Validate Period`
 
 ### Partner Approval Workflow
 
-**New Buttons Added:**
-- `Request For Approval` - Send for approval
-- `Approve` - Approve partner (for approvers)
-- `Reject` - Reject partner (for approvers)
-- `State For Approved` - Move from Pending Document to Approved
+```mermaid
+graph TB
+    A[Create Partner] --> B[Fill All Details]
+    B --> C{Upload Documents?}
+    C -->|Yes| D[Documents Attached ✓]
+    C -->|No| E[Will Upload Later]
+    D --> F[Request Approval]
+    E --> F
 
-**Usage:**
-1. Create partner with all details
-2. Upload documents (recommended)
-3. Click `Request For Approval`
-4. Approvers receive email
-5. Approver clicks `Approve` or `Reject`
-6. If multi-level, auto-escalates to next level
-7. Final status: Approved or Pending Document
+    F --> G{Approval Process}
+    G --> H[Level 1 Approves]
+    H --> I{Multi-Level?}
+    I -->|Yes| J[Level 2 Approves]
+    J --> K{3 Levels?}
+    K -->|Yes| L[Level 3 Approves]
+    K -->|No| M{Documents Present?}
+    I -->|No| M
+    L --> M
+
+    M -->|Yes| N[Status: Approved ✓]
+    M -->|No| O[Status: Pending Document ⚠️]
+
+    O --> P{Upload Within Period?}
+    P -->|Yes| Q[Upload Documents]
+    Q --> R[Click: State For Approved]
+    R --> N
+
+    P -->|Period Expired| S[Status: Approved Without Doc ⚠️]
+
+    style N fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
+    style O fill:#F57C00,stroke:#fff,stroke-width:2px,color:#fff
+    style S fill:#C62828,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+**Steps to Request Approval:**
+
+1. Open the partner
+2. Click **"Request For Approval"** button
+3. Select approvers (if single-level) or automatic (if multi-level)
+4. Click **"Send Request"**
+5. Approvers receive email notification
+6. Wait for approval
+
+**For Approvers:**
+
+1. Open partner showing "Waiting Approval"
+2. Review all information
+3. Click **"Approve"** or **"Reject"**
+4. Add notes (optional)
+5. Confirm
+
+**Handling Missing Documents:**
+
+If partner approved without documents:
+1. Upload the missing documents
+2. Click **"State For Approved"** button
+3. Status changes to Approved
 
 ---
 
-## 📦 Product Extensions
+## 📦 Enhanced Product Management
 
-### Custom Fields Added to `product.template`
+### New Product Fields
 
-#### 1. Product Identification
+**Product Identification:**
+- **Product Code:** Your internal product code
+- **Warranty Period:** Warranty information (e.g., "24 months")
+- **Country of Origin:** Where it's manufactured
+- **Brand:** Product brand (select from brand master)
 
-```yaml
-product_code: Custom product code (e.g., "LB-001")
-warranty_period: Warranty duration (e.g., "24 months")
-country_of_origin: Manufacturing country (Many2one)
-brand_id: Product brand (Many2one to product.brand)
-product_catalogs: Product brochures/datasheets (Many2many attachments)
-```
+**Product Catalogs:**
+- **Upload product brochures, datasheets, specifications**
+- **⚠️ MANDATORY before requesting approval**
+
+### Product Categories with Codes
+
+**Added to Categories:**
+- **Category Code:** Short code (e.g., "LAB" for Laboratory Equipment)
+- **GP Margin (%):** Minimum profit margin for this category
 
 **Internal Reference Auto-Generation:**
 ```
-Formula: [Category Code] - [Product Code]
-Example: "LAB" (category code) + "LB-001" (product code) = "LAB-LB-001"
+Your Product Code: LB-001
+Category Code: LAB
+→ Internal Reference becomes: LAB-LB-001
 ```
 
-#### 2. Category Extensions
-
-Added to `product.category`:
-
-```yaml
-category_code: Short code for internal reference (e.g., "LAB")
-gp_margin: Minimum GP margin % for this category (e.g., 15.0)
-```
-
-**Configuration:**
-`Inventory → Configuration → Product Categories` - Add codes and margins
-
-#### 3. Brand Management (`bi_product_brand`)
+### Product Brands
 
 **New Menu:** `Inventory → Configuration → Brands`
 
-**Fields:**
-- Brand name
-- Brand image/logo
-- Sequence
-- Total items (auto-computed product count)
+**Features:**
+- Add brand name
+- Upload brand logo
+- System counts how many products use each brand
 
 ### Product Approval Workflow
 
-**Critical Rules:**
-- ⚠️ **Product catalogs MUST be uploaded before requesting approval**
-- ✅ **Only approved products can be used in transactions**
-- 🔒 **Product form becomes READ-ONLY during approval process**
+```mermaid
+graph TB
+    A[Create Product] --> B[Fill All Details]
+    B --> C{Upload Product Catalogs}
+    C -->|No| D[❌ Cannot Request Approval<br/>Error Message]
+    C -->|Yes| E[Click: Request For Approval]
 
-**New States:**
-```yaml
-draft: Initial creation
-waiting_approve: Approval requested
-approved: Ready for use ✓
-rejected: Rejected by approver
+    D --> F[Upload Catalogs First]
+    F --> E
+
+    E --> G[Product Locked 🔒<br/>Cannot Edit During Approval]
+    G --> H[Approver Reviews]
+
+    H --> I{Decision}
+    I -->|Approve| J[Status: Approved ✓]
+    I -->|Reject| K[Status: Draft<br/>Can Edit Again]
+
+    J --> L[Available in All Transactions ✓]
+    K --> M[Fix Issues & Resubmit]
+
+    style J fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#C62828,stroke:#fff,stroke-width:2px,color:#fff
+    style L fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-**Transaction Blocking:**
+**Critical Rule:**
 
-When trying to use unapproved product in sales/purchase/invoice/stock:
+> **⚠️ Only APPROVED products can be used in sales orders, purchase orders, invoices, and stock moves**
+
+**What Happens if Product Not Approved:**
+
+When trying to add to transaction:
 ```
-⚠️ Validation Error
-Product must be approved before use in transactions.
-Product: [Product Name]
-Status: [Draft / Waiting Approval]
+❌ Error: Product must be approved before use
 ```
 
-**Approval Process:**
-1. Create product with all details
-2. **Upload product catalogs** (mandatory)
-3. Click `Request For Approval`
-4. Product form locks (read-only)
-5. Approver reviews and approves/rejects
-6. If approved → Available in all transactions
-7. If rejected → Form editable again
+**How to Fix:**
+1. Go to the product
+2. Upload product catalogs (if missing)
+3. Request approval
+4. Wait for approval
+5. Try again
 
 ---
 
-## 📞 CRM Automation
+## 📞 CRM Automation Features
 
-### Custom Features (`lablink_crm_extend`)
+### What's Automated?
 
 #### 1. Auto-Stage Update
 
-**Configuration:** `Settings → CRM Settings`
+**What It Does:**
+- When you create a quotation from a lead → Lead automatically moves to "Quotation Sent" stage
+- When you confirm the order → Lead automatically moves to "Won" stage
 
-```yaml
-State After Quotation Creation: [Select CRM Stage]
-State After Sale Order Confirmation: [Select CRM Stage]
-```
+**Configure:**
+`Settings → CRM Settings`
 
-**Automatic Behavior:**
+Set these fields:
+- **State After Quotation Creation** → Select the stage (e.g., "Quotation Sent")
+- **State After Sale Order Confirmation** → Select the stage (e.g., "Won")
 
 ```mermaid
 sequenceDiagram
-    participant L as Lead
-    participant Q as Quotation
-    participant S as Sale Order
+    participant Lead
+    participant System
 
-    L->>Q: Create Quotation
-    Q->>L: Auto-update stage to "Quotation Sent"
-    Q->>S: Confirm Sale Order
-    S->>L: Auto-update stage to "Won"
+    Lead->>Lead: Create Quotation
+    System->>Lead: Auto-move to "Quotation Sent"
+
+    Lead->>Lead: Confirm Order
+    System->>Lead: Auto-move to "Won"
 ```
 
 #### 2. Auto-Close Stale Leads
 
-**Configuration:** `Settings → CRM Settings`
+**What It Does:**
+- Automatically closes leads where quotations were sent but not confirmed within X months
+- Marks them as "Lost" with your configured reason
 
-```yaml
-Should Close Leads Automatically: ✓
-Months After Closed: 3
-Reason For Lost: "No Response"
-```
+**Configure:**
+`Settings → CRM Settings`
 
-**Cron Job:**
-- Name: "Auto Cancel CRM Lead"
-- Runs: Daily at 2:00 AM
-- Logic: If quotation created > X months ago AND not confirmed → Close as Lost
+- ✓ **Should Close Leads Automatically**
+- **Months After Closed:** Enter number (e.g., 3)
+- **Reason For Lost:** Select reason (e.g., "No Response")
+
+**When It Runs:**
+- Daily at 2:00 AM
+- Reviews all leads with old quotations
+- Closes the ones that haven't converted
 
 #### 3. Salesperson Auto-Assignment
 
-**Custom Field on Lead:**
-```yaml
-user_id (Salesperson): Auto-filled from customer's quotation_officer
-```
+**What It Does:**
+When you create a lead and select a customer, the salesperson automatically fills in from that customer's "Quotation Officer" field.
 
-**Logic:**
-```
-When lead.partner_id is set:
-  → lead.user_id = partner_id.quotation_officer
-```
-
-### Custom Fields Added to `crm.lead`
-
-```yaml
-kanban_count_sum: Count of quotations/orders
-date: Lead creation date
-email_thread_id: UUID for email threading (see Email Thread section)
-email_thread_message_id: Root Message-ID
-email_thread_subject: Original subject
-```
+**No configuration needed** - works automatically!
 
 ---
 
-## 💼 Sales Order Enhancements
+## 💼 Advanced Sales Features
 
-### Custom Fields on `sale.order`
+### New Fields on Sales Orders
 
-#### 1. Quotation Details
+#### Quotation Details
 
-```yaml
-quotation_officer: Officer handling this quotation
-quotation_type: Type of quotation (Normal/Sample/Tender)
-quotation_heading: Custom heading for quotation PDF
-contact_person: Contact person (from customer contacts)
-contact_number: Contact phone number
-```
+**New fields to customize your quotations:**
 
-#### 2. Priority Management
+| Field | Purpose | Example |
+|-------|---------|---------|
+| **Quotation Officer** | Who's handling this quotation | John Silva |
+| **Quotation Type** | Type of quote | Tender / Sample / Normal |
+| **Quotation Heading** | Custom heading on PDF | "Medical Equipment Supply" |
+| **Contact Person** | Customer's contact | Dr. Perera |
+| **Contact Number** | Contact's phone | +94 77 123 4567 |
 
-```yaml
-priority_level: Very Urgent / Urgent / Regular (Many2one)
-```
+#### Priority Management
 
-**Configuration:** `Sales → Configuration → Sale Order Priority`
+**New field:** `Priority Level`
 
-Create priority levels with:
-- Name (e.g., "Very Urgent")
-- Color (for visual indication)
-- Sequence
+**Options:**
+- 🔴 Very Urgent
+- 🟠 Urgent
+- ⚫ Regular
 
-#### 3. Order Information
+**Configure Priorities:**
+`Sales → Configuration → Sale Order Priority`
 
-```yaml
-inquiry_date: When customer inquiry received
-po_number: Customer's purchase order number
-po_received_date: When PO was received
-```
+Create your own priority levels with colors!
 
-#### 4. Commission Management
+#### Order Information
 
-```yaml
-commission: Commission rate % (auto-filled from customer)
-enable_special_rate: Enable special commission for this order
-special_rate: Special commission rate %
-commission_description: Notes about commission
-```
+| Field | What It Tracks |
+|-------|----------------|
+| **Inquiry Date** | When customer inquiry received |
+| **PO Number** | Customer's purchase order number |
+| **PO Received Date** | When PO was received |
 
-#### 5. Customer Information (Related)
+#### Commission Management
 
-Auto-displayed from customer:
-```yaml
-customer_type: Government/Private
-customer_type_sscl: SSCL classification
-```
+| Field | Purpose |
+|-------|---------|
+| **Commission (%)** | Default from customer |
+| **Enable Special Rate** | Check to use different rate |
+| **Special Rate (%)** | Override commission for this order |
+| **Commission Description** | Notes about commission |
 
-#### 6. Tax Configuration
+#### Credit Monitoring
 
-```yaml
-vat_type: VAT/SVAT/Non-VAT/GST (auto from customer, can override)
-svat: SVAT amount (computed for government customers)
-```
+**Pending Credit Days:** Shows how many days since customer's oldest unpaid invoice
 
-#### 7. Credit Monitoring
+> **💡 Helps identify customers with payment delays**
 
-```yaml
-pending_credit_days: Days since oldest unpaid invoice (computed)
-```
+### New Fields on Order Lines
 
-**Calculation:**
-```python
-oldest_overdue_invoice = min(invoice.date_due for unpaid invoices)
-pending_credit_days = today - oldest_overdue_invoice
-```
+#### Product Information Auto-Displayed
 
-#### 8. Product Aggregation
+When you add a product, these automatically show:
+- Internal Reference
+- Brand
+- Country of Origin
+- Warranty Period
 
-```yaml
-all_products: All products in order (Many2many computed)
-product_names_text: Comma-separated product names
-product_codes_text: Comma-separated product codes
-```
+#### Availability
 
-### Custom Fields on `sale.order.line`
-
-#### 1. Sequence
-
-```yaml
-sequence: Auto-numbered line sequence (1, 2, 3...)
-```
-
-From `one2many_sequence_sf` module - auto-numbered, displayed in reports.
-
-#### 2. Product Details (Related)
-
-Auto-displayed from product:
-```yaml
-default_code: Internal reference
-brand_id: Product brand
-country_of_origin_id: Country of origin
-warranty_period: Warranty details
-```
-
-#### 3. Availability
-
-```yaml
-availability_id: Delivery lead time (Many2one)
-```
-
-**Configuration:** `Sales → Configuration → Availability`
-
-Pre-configured options:
+**Select delivery lead time:**
 - Import & supply within 2-4 weeks
 - 4-6 weeks
-- 4-8 weeks
 - 6-8 weeks
-- 8-12 weeks
+- etc.
 
-#### 4. Price History (Computed)
+**Configure Options:**
+`Sales → Configuration → Availability`
 
-```yaml
-last_quoted_price: Last price quoted to THIS customer for THIS product
-last_invoiced_price: Last price invoiced to THIS customer for THIS product
+#### Price History (Very Useful!)
+
+**System automatically shows:**
+- **Last Quoted Price:** Last price you quoted to THIS customer for THIS product
+- **Last Invoiced Price:** Last price you invoiced to THIS customer
+
+> **💡 Helps maintain consistent pricing across orders**
+
+```mermaid
+graph LR
+    A[Add Product to Order] --> B[System Checks History]
+    B --> C[Shows Last Quoted: LKR 240,000]
+    B --> D[Shows Last Invoiced: LKR 245,000]
+    C --> E[You decide pricing<br/>based on history]
+    D --> E
+
+    style C fill:#1565C0,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-**Purpose:** Maintain pricing consistency across orders.
+#### Auto-Numbering
 
-**Calculation:**
-```python
-last_quoted_price = last(sale.order.line where
-    partner = current_partner AND
-    product = current_product AND
-    state in ['sale', 'done']
-).price_unit
-
-last_invoiced_price = last(account.move.line where
-    partner = current_partner AND
-    product = current_product AND
-    move_type = 'out_invoice' AND
-    state = 'posted'
-).price_unit
-```
-
-#### 5. Additional Pricing
-
-```yaml
-quotation_quantity: Quantity for quotation (can differ from ordered)
-price_reduce_tax_excl: Price after discount excluding tax
-```
+All lines automatically get sequence numbers (1, 2, 3...) displayed on reports.
 
 ---
 
 ## ✅ Sales Order Validations
 
-### Overview (`sales_validations` module)
+### What Are Sales Validations?
 
-Three-checkpoint validation system that blocks sales order confirmation until approved:
+**Three checkpoints** that can block order confirmation until approved:
 
-1. **GP Margin Validation** - Ensures minimum profit margins
-2. **Credit Limit Validation** - Prevents credit limit violations
+1. **GP Margin Validation** - Ensures you maintain minimum profit
+2. **Credit Limit Validation** - Prevents exceeding customer credit limits
 3. **Payment Terms Validation** - Blocks orders from customers with overdue payments
 
-### Configuration
+### Complete Validation Flow
+
+```mermaid
+graph TB
+    A[Click Confirm on Order] --> B{Check Validations}
+
+    B --> C1{GP Margin OK?}
+    B --> C2{Credit Limit OK?}
+    B --> C3{Payment Terms OK?}
+
+    C1 -->|Pass ✓| D{All Pass?}
+    C2 -->|Pass ✓| D
+    C3 -->|Pass ✓| D
+
+    C1 -->|Fail ❌| E[Status: Pending]
+    C2 -->|Fail ❌| E
+    C3 -->|Fail ❌| E
+
+    D -->|Yes| F[Order Confirmed ✓]
+
+    E --> G[Send for Approval]
+    G --> H[Approver Reviews]
+    H --> I{Approved?}
+    I -->|Yes| J[Status: Approved]
+    I -->|No| K[Back to Quotation]
+    J --> L[Click Confirm Again]
+    L --> F
+
+    style F fill:#2E7D32,stroke:#fff,stroke-width:3px,color:#fff
+    style E fill:#F57C00,stroke:#fff,stroke-width:2px,color:#fff
+    style K fill:#C62828,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+### How to Configure
 
 **Path:** `Settings → Sales → Sales Validations`
 
-```yaml
-GP Margin Validation:
-  - Enable: ✓
-  - Company GP Margin (%): 15.0
+#### 1. GP Margin Validation
 
-Credit Limit Validation:
-  - Enable: ✓
+**Enable:**
+- ✓ Check "Enable GP Margin Validation"
+- Enter "Company GP Margin (%)" → e.g., 15
 
-Payment Terms Validation:
-  - Enable: ✓
+**How It Works:**
+- System calculates margin for each line
+- Compares with minimum (category margin or company margin)
+- If below threshold → blocks and requires approval
+
+**Category-Specific Margins:**
+Go to product category → Set "GP Margin (%)"
+
+**Example:**
+```
+Category: Laboratory Equipment
+GP Margin: 20%
+
+If any product in this category is sold with less than 20% margin
+→ Requires approval
 ```
 
-### Validation Flow
+#### 2. Credit Limit Validation
 
-```mermaid
-graph TD
-    A[Click Confirm] --> B{GP Margin OK?}
-    B -->|< Threshold| C[Trigger GP Validation]
-    B -->|✓ OK| D{Credit Limit OK?}
+**Enable:**
+- ✓ Check "Enable Credit Limit Validation"
 
-    C --> E[Status: Pending]
+**How It Works:**
+```
+Remaining Credit = Customer's Credit Limit - Unpaid Invoices - New Order Total
 
-    D -->|Exceeded| F[Trigger Credit Validation]
-    D -->|✓ OK| G{Payment Terms OK?}
-
-    F --> E
-
-    G -->|Overdue| H[Trigger Payment Validation]
-    G -->|✓ OK| I[Confirm Order ✓]
-
-    H --> E
-
-    E --> J[Send for Approval]
-    J --> K{Approved?}
-    K -->|Yes| L[Status: Approved]
-    K -->|No| M[Status: Quotation]
-    L --> N[Click Confirm Again]
-    N --> I
-
-    style I fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
-    style E fill:#F57C00,stroke:#fff,stroke-width:2px,color:#fff
-    style M fill:#C62828,stroke:#fff,stroke-width:2px,color:#fff
+If Remaining Credit < 0 → Requires approval
 ```
 
-### 1. GP Margin Validation
+**Set Credit Limits:**
+`Contacts → Customer → Sales & Purchase tab → Credit Limit`
 
-**Trigger Logic:**
-```python
-for line in order.order_line:
-    line_margin_pct = ((line.price_unit - line.product_id.standard_price) / line.price_unit) * 100
+#### 3. Payment Terms Validation
 
-    # Check against category margin first, then company margin
-    min_margin = line.product_id.categ_id.gp_margin or company.gp_margin
+**Enable:**
+- ✓ Check "Enable Payment Terms Validation"
 
-    if line_margin_pct < min_margin:
-        trigger_gp_validation = True
-```
+**How It Works:**
+- System checks if customer has ANY overdue invoices
+- If yes → blocks order confirmation
+- Requires approval to proceed
 
-**Custom Fields:**
-```yaml
-triggered_gp_margin_validation: Boolean flag
-approved_by: User who approved GP margin
-```
+### For Sales Users
 
-**Approval Button:** `Send for GP Margin Approval`
-**Approver Group:** `Sales Order Gross Profit Approver`
+**When Validation Blocks Your Order:**
 
-### 2. Credit Limit Validation
+1. Order shows **Status: Pending**
+2. You see buttons like:
+   - "Send for GP Margin Approval"
+   - "Send for Credit Limit Approval"
+   - "Send for Payment Term Approval"
+   - "Send for All Validations Approval" (if multiple)
 
-**Trigger Logic:**
-```python
-remaining_credit = partner.credit_limit - partner.total_receivable - order.amount_total
+3. **Click the appropriate button**
+4. Select approver from the group
+5. Click "Send"
+6. Wait for approval
+7. After approved, click "Confirm" again
 
-if remaining_credit < 0:
-    trigger_credit_validation = True
-```
+### For Approvers
 
-**Custom Fields:**
-```yaml
-triggered_credit_limit_validation: Boolean flag
-credit_approved_by: User who approved credit limit
-```
+**When You Receive Approval Request:**
 
-**Approval Button:** `Send for Credit Limit Approval`
-**Approver Group:** `Sales Order Credit Limit Approver`
+1. Go to `Sales → Orders` → Filter by "Pending"
+2. Open the order
+3. Review the specific issue:
+   - **GP Margin:** Check margin % on lines
+   - **Credit Limit:** Check remaining credit amount
+   - **Payment Terms:** Check pending credit days
+4. Click appropriate approve button:
+   - "Approve GP Margin"
+   - "Approve Credit Limit"
+   - "Approve Payment Term"
+5. Order moves to "Approved" status
+6. Salesperson can now confirm
 
-### 3. Payment Terms Validation
-
-**Trigger Logic:**
-```python
-overdue_invoices = partner.invoice_ids.filtered(
-    lambda inv: inv.state == 'posted'
-    and inv.payment_state in ['not_paid', 'partial']
-    and inv.invoice_date_due < today
-)
-
-if overdue_invoices:
-    trigger_payment_validation = True
-```
-
-**Custom Fields:**
-```yaml
-triggered_payment_term_validation: Boolean flag
-pt_approved_by: User who approved payment terms
-```
-
-**Approval Button:** `Send for Payment Term Approval`
-**Approver Group:** `Sales Order Payment Term Approver`
-
-### Combined Approval
-
-**Button:** `Send for All Validations Approval`
-**Approver Group:** `Sales Order All Validations Approver`
-
-Use this when multiple validations triggered - single approval covers all.
-
-### Custom States
-
-```yaml
-quotation: Draft quotation
-pending: Validation triggered, awaiting approval
-approved: Approved by validator, ready to confirm
-sale: Confirmed order
-done: Completed
-```
-
-### Invoice Margin Visibility
-
-**Feature:** Show cost and margin on invoices (restricted access)
-
-**Security Group:** `Show Invoice Margin`
-
-**Fields Added to Invoice Lines:**
-```yaml
-purchase_price: Product cost
-margin: Profit amount (computed)
-margin_percentage: Profit % (computed)
-```
-
-**Calculation:**
-```python
-margin = (price_unit - purchase_price) * quantity
-margin_percentage = ((price_unit - purchase_price) / price_unit) * 100
-```
-
-Only users in "Show Invoice Margin" group can see these fields.
+**Or Reject:**
+- Click "Reject"
+- Enter reason
+- Order returns to quotation stage
 
 ---
 
 ## 📧 Email Thread Continuity
 
-### Overview (`lablink_mail_thread` module)
+### What Is This?
 
-Maintains single email conversation thread across the entire sales cycle:
+**A special feature that keeps all emails in ONE conversation thread** as you progress from Lead → Quotation → Order → Invoice.
 
-```
-Lead → Quotation → Sale Order → Invoice
-```
+**Benefit:** Customer sees everything in one email thread, just like a normal conversation!
 
-All emails appear in customer's inbox as ONE threaded conversation.
-
-### Technical Implementation
-
-#### UUID-Based Thread Tracking
-
-When lead created:
-```python
-lead.email_thread_id = str(uuid.uuid4())
-# Example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-```
-
-#### Message-ID Capture
-
-When first email sent from lead:
-```python
-lead.email_thread_message_id = "<%s@%s>" % (lead.email_thread_id, company.domain)
-lead.email_thread_subject = "Original Subject"
-```
-
-#### Thread Inheritance
+### How It Works
 
 ```mermaid
-graph LR
-    A[Lead] -->|Creates| B[Quotation]
-    B -->|Confirms| C[Sale Order]
-    C -->|Invoices| D[Invoice]
+sequenceDiagram
+    participant Lead
+    participant Quote
+    participant Order
+    participant Invoice
+    participant Customer
 
-    A -->|Inherits| B
-    B -->|Inherits| C
-    C -->|Inherits| D
+    Lead->>Customer: Initial Email<br/>Subject: Equipment Inquiry
+    Note over Lead: Thread Created ✓
 
-    style A fill:#455A64,stroke:#fff,stroke-width:2px,color:#fff
-    style B fill:#1565C0,stroke:#fff,stroke-width:2px,color:#fff
-    style C fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
-    style D fill:#F57C00,stroke:#fff,stroke-width:2px,color:#fff
+    Quote->>Customer: Quotation Email<br/>Subject: Re: Equipment Inquiry
+    Note over Quote: Same Thread ✓
+
+    Order->>Customer: Order Confirmation<br/>Subject: Re: Equipment Inquiry
+    Note over Order: Same Thread ✓
+
+    Invoice->>Customer: Invoice<br/>Subject: Re: Equipment Inquiry
+    Note over Invoice: Same Thread ✓
+
+    Note over Customer: Customer sees ONE<br/>conversation with<br/>all 4 emails ✓
 ```
 
-**Inheritance Logic:**
-```python
-# Quotation inherits from lead
-quotation.email_thread_id = lead.email_thread_id
-quotation.email_thread_message_id = lead.email_thread_message_id
-quotation.email_thread_subject = lead.email_thread_subject
-quotation.source_lead_id = lead.id
+### Requirements for Threading to Work
 
-# Sale order maintains from quotation
-sale_order.email_thread_id = quotation.email_thread_id
-sale_order.email_thread_message_id = quotation.email_thread_message_id
-sale_order.email_thread_subject = quotation.email_thread_subject
+**✓ Must Do:**
+1. **Create quotation FROM the lead** (use "New Quotation" button)
+2. **Send at least one email from the lead first** (this captures the thread info)
 
-# Invoice maintains from sale order
-invoice.email_thread_id = sale_order.email_thread_id
-invoice.email_thread_message_id = sale_order.email_thread_message_id
-invoice.email_thread_subject = sale_order.email_thread_subject
-invoice.source_sale_order_id = sale_order.id
+**❌ Don't Do:**
+- Don't create quotations manually without linking to lead
+- Don't skip sending the initial lead email
+
+### How to Use Properly
+
+**Step-by-Step:**
+
+1. **Create CRM Lead**
+   - Fill in customer and details
+   - Save
+
+2. **Send Email from Lead** ← Important!
+   - Click email/message button in lead
+   - Send initial email to customer
+   - Subject: "Equipment Inquiry" (or whatever)
+
+3. **Create Quotation FROM Lead**
+   - Click "New Quotation" button in lead
+   - Fill in quotation details
+   - Send quotation email
+   - Subject automatically becomes: "Re: Equipment Inquiry"
+
+4. **Confirm Order**
+   - Order emails continue same thread
+
+5. **Send Invoice**
+   - Invoice emails continue same thread
+
+**Result:** Customer sees:
 ```
+📧 Equipment Inquiry
+   ├─ Initial inquiry discussion
+   ├─ Quotation
+   ├─ Order confirmation
+   └─ Invoice
 
-#### Email Header Injection
-
-Overrides `_notify_by_email_get_headers()` method:
-
-```python
-headers = {
-    'Message-ID': email_thread_message_id,
-    'In-Reply-To': email_thread_message_id,
-    'References': email_thread_message_id,
-}
-
-subject = "Re: %s" % email_thread_subject
-```
-
-### Result in Customer's Inbox
-
-```
-📧 Laboratory Equipment Inquiry - ABC Hospital
-   │
-   ├─ 📩 Initial inquiry (Lead email)
-   ├─ 📩 Quotation Q001 (Quotation email)
-   ├─ 📩 Order confirmation S001 (Sale order email)
-   └─ 📩 Invoice INV/2025/0001 (Invoice email)
-
-All messages grouped in SINGLE conversation thread ✓
-```
-
-### Custom Fields Added
-
-**On `crm.lead`:**
-```yaml
-email_thread_id: UUID (Char)
-email_thread_message_id: Email Message-ID (Char)
-email_thread_subject: Original subject (Char)
-```
-
-**On `sale.order`:**
-```yaml
-email_thread_id: Inherited (Char)
-email_thread_message_id: Inherited (Char)
-email_thread_subject: Inherited (Char)
-source_lead_id: Source lead (Many2one)
-```
-
-**On `account.move`:**
-```yaml
-email_thread_id: Inherited (Char)
-email_thread_message_id: Inherited (Char)
-email_thread_subject: Inherited (Char)
-source_sale_order_id: Source order (Many2one)
+All in ONE conversation! ✓
 ```
 
 ---
 
 ## 💰 Sri Lankan Tax Configuration
 
-### Overview (`local_tax_config` module)
-
-Implements Sri Lankan tax types: VAT, SVAT, GST, and Other.
-
-### Tax Types
+### Tax Types Available
 
 ```mermaid
 graph TD
-    A[Sri Lankan Taxes] --> B[VAT 18%]
+    A[Tax Types] --> B[VAT 18%]
     A --> C[SVAT 8%]
     A --> D[GST]
-    A --> E[Other/Non-VAT]
+    A --> E[Non-VAT]
 
-    B --> B1[Private Sector<br/>Standard Goods/Services]
+    B --> B1[Private Sector<br/>Standard Goods]
     C --> C1[Government Entities<br/>Social Services]
-    D --> D1[Alternative Tax Structure]
+    D --> D1[Alternative Tax]
     E --> E1[Exempt Items]
 
     style B fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
@@ -842,550 +767,331 @@ graph TD
     style E fill:#616161,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### Custom Fields Added
-
-**On `account.tax`:**
-```yaml
-vat_type: Selection (vat/svat/gst/other)
-```
-
-**On `res.partner`:**
-```yaml
-vat_type: Selection (vat/svat/non_vat/gst)
-```
-
-**On `sale.order`:**
-```yaml
-vat_type: Selection (inherited from partner, can override)
-svat: SVAT amount (Monetary, computed)
-```
-
-**On `account.move`:**
-```yaml
-vat_type: Selection (inherited from sale order)
-```
-
-### Tax Application Logic
-
-```python
-# When partner selected in sale order
-sale_order.vat_type = partner.vat_type
-
-# When VAT type changed, recalculate all line taxes
-if vat_type == 'vat':
-    apply_taxes = taxes.filtered(lambda t: t.vat_type == 'vat')
-elif vat_type == 'svat':
-    apply_taxes = taxes.filtered(lambda t: t.vat_type == 'svat')
-elif vat_type == 'gst':
-    apply_taxes = taxes.filtered(lambda t: t.vat_type == 'gst')
-else:
-    apply_taxes = False  # No tax
-```
-
-### SVAT Calculation
-
-**Special Logic for Government Customers:**
-
-```python
-if partner.customer_type == 'government' and vat_type == 'svat':
-    svat_amount = sum(line.price_total - line.price_subtotal
-                      for line in order_lines)
-    # Displayed separately in order
-```
-
-**Display on Order:**
-```
-Untaxed Amount: LKR 500,000.00
-Tax: LKR 40,000.00
-SVAT: LKR 40,000.00  ← Shown separately
-Total: LKR 540,000.00
-```
-
-### Tax Configuration
+### Setting Up Tax Types
 
 **Path:** `Accounting → Configuration → Taxes`
 
-**When creating tax:**
-1. Set standard tax fields (name, amount, type)
-2. **Set VAT Type field:** vat/svat/gst/other
-3. Tax now available for selection based on customer VAT type
+**When Creating a Tax:**
 
-**Unique Constraint:**
+1. Fill in standard tax fields (name, percentage, etc.)
+2. **Important:** Set the "VAT Type" field:
+   - **vat** - For standard VAT (18%)
+   - **svat** - For social VAT (8% for government)
+   - **gst** - For GST taxes
+   - **other** - For non-VAT items
+
+**Example:**
 ```
-(name, company_id, type_tax_use, tax_scope, vat_type) must be unique
+Tax Name: VAT 18%
+Amount: 18%
+VAT Type: vat ← Set this!
+
+Tax Name: SVAT 8%
+Amount: 8%
+VAT Type: svat ← Set this!
+```
+
+### Setting Customer VAT Type
+
+**Path:** `Contacts → Customer → Edit`
+
+**Field:** "VAT Type"
+
+**Options:**
+- **VAT** - Private customers (18% tax)
+- **SVAT** - Government customers (8% tax)
+- **Non-VAT** - Exempt customers
+- **GST** - GST customers
+
+### How Taxes Apply Automatically
+
+**Flow:**
+
+```mermaid
+graph LR
+    A[Create Sales Order] --> B[Customer VAT Type<br/>Auto-Fills]
+    B --> C{VAT Type?}
+    C -->|VAT| D[18% Tax Applied]
+    C -->|SVAT| E[8% Tax Applied]
+    C -->|Non-VAT| F[No Tax]
+    C -->|GST| G[GST Tax Applied]
+
+    style D fill:#2E7D32,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#1565C0,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+**You Can Override:**
+- In sales order, change "VAT Type" field
+- All line taxes recalculate automatically
+
+### SVAT for Government Customers
+
+**Special Feature:**
+When customer is Government + VAT Type is SVAT:
+- SVAT amount displays separately on order
+- Makes reporting easier
+
+**Order Display:**
+```
+Untaxed Amount: LKR 500,000
+Tax: LKR 40,000
+SVAT: LKR 40,000 ← Shown separately
+Total: LKR 540,000
 ```
 
 ---
 
-## 📊 Custom Fields Reference
+## 📊 Quick Reference Guide
 
-### res.partner (Contact/Customer)
+### Configuration Checklist
 
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Customer Classification
-customer_type: Selection ['government', 'private']
-customer_type_sscl: Many2one 'customer.type'
-business_nature: Many2one 'business.nature'
-type_of_business: Char
-grn_type: Selection ['local', 'import', 'service']
-
-# Sales Configuration
-quotation_officer: Many2one 'res.users'
-commission: Float (%)
-
-# Tax Configuration
-vat_type: Selection ['vat', 'svat', 'non_vat', 'gst']
-
-# Document Management
-business_reg_attachments: Many2many 'ir.attachment'
-vat_reg_attachments: Many2many 'ir.attachment'
-customer_reg_attachments: Many2many 'ir.attachment'
-partner_document_status: Selection ['within_period', 'beyond_period']
-no_of_days: Integer (computed - days since creation)
-configured_period: Integer (from settings)
-
-# Credit Management
-remaining_credit_limit: Monetary (computed)
-
-# Approval Fields (from approval framework)
-state: Selection
-is_have_user_access: Boolean (computed)
-ct_approval_requested_by: Many2one 'res.users'
-ct_approval_requested_date: Datetime
-ct_approval_requested_users: Many2many 'res.users'
-ct_approved_by: Many2one 'res.users'
-ct_approved_date: Datetime
-ct_approved_note: Text
-ct_rejected_by: Many2one 'res.users'
-ct_rejected_date: Datetime
-ct_rejected_note: Text
-```
-
-</details>
-
-### product.template (Product)
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Product Identification
-product_code: Char
-warranty_period: Char
-country_of_origin_id: Many2one 'res.country'
-brand_id: Many2one 'product.brand'
-product_catalogs: Many2many 'ir.attachment'
-
-# Approval Fields
-state: Selection ['draft', 'waiting_approve', 'approved', 'rejected']
-is_have_user_access: Boolean (computed)
-ct_approval_requested_by: Many2one 'res.users'
-ct_approval_requested_date: Datetime
-ct_approval_requested_users: Many2many 'res.users'
-ct_approved_by: Many2one 'res.users'
-ct_approved_date: Datetime
-ct_approved_note: Text
-ct_rejected_by: Many2one 'res.users'
-ct_rejected_date: Datetime
-ct_rejected_note: Text
-```
-
-</details>
-
-### product.category
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-category_code: Char (used for internal reference generation)
-gp_margin: Float (minimum GP margin % for category)
-```
-
-</details>
-
-### crm.lead
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Salesperson auto-assignment
-user_id: Many2one 'res.users' (auto from partner.quotation_officer)
-
-# Analytics
-kanban_count_sum: Integer (count of quotations/orders)
-date: Datetime (creation date)
-
-# Email Threading
-email_thread_id: Char (UUID)
-email_thread_message_id: Char (Message-ID)
-email_thread_subject: Char (Original subject)
-```
-
-</details>
-
-### sale.order
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Quotation Details
-quotation_officer: Many2one 'res.users'
-quotation_type: Char
-quotation_heading: Char
-contact_person: Many2one 'res.partner'
-contact_number: Char
-
-# Priority
-priority_level: Many2one 'sale.order.priority'
-
-# Order Information
-inquiry_date: Date
-po_number: Char
-po_received_date: Date
-
-# Commission
-commission: Float (%)
-enable_special_rate: Boolean
-special_rate: Float (%)
-commission_description: Text
-
-# Customer Info (Related)
-customer_type: Selection (related from partner)
-customer_type_sscl: Many2one (related from partner)
-
-# Tax
-vat_type: Selection ['vat', 'svat', 'non_vat', 'gst']
-svat: Monetary (computed)
-
-# Credit Monitoring
-pending_credit_days: Integer (computed)
-
-# Product Aggregation
-all_products: Many2many 'product.product' (computed)
-product_names_text: Char (computed - comma-separated)
-product_codes_text: Char (computed - comma-separated)
-
-# Email Threading
-email_thread_id: Char (inherited from lead)
-email_thread_message_id: Char
-email_thread_subject: Char
-source_lead_id: Many2one 'crm.lead'
-
-# Sales Validations
-state: Selection (includes 'pending', 'approved')
-triggered_gp_margin_validation: Boolean
-triggered_gp_margin_validation1: Boolean
-triggered_credit_limit_validation: Boolean
-triggered_credit_limit_validation1: Boolean
-triggered_payment_term_validation: Boolean
-triggered_payment_term_validation1: Boolean
-approved_by: Many2one 'res.users'
-credit_approved_by: Many2one 'res.users'
-pt_approved_by: Many2one 'res.users'
-```
-
-</details>
-
-### sale.order.line
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Sequence
-sequence: Integer (auto-numbered)
-
-# Product Details (Related)
-default_code: Char (related from product)
-brand_id: Many2one (related from product)
-country_of_origin_id: Many2one (related from product)
-warranty_period: Char (related from product)
-
-# Availability
-availability_id: Many2one 'availability.availability'
-
-# Price History
-last_quoted_price: Monetary (computed)
-last_invoiced_price: Monetary (computed)
-
-# Additional Pricing
-quotation_quantity: Float
-price_reduce_tax_excl: Monetary (computed)
-```
-
-</details>
-
-### account.move (Invoice)
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Tax
-vat_type: Selection (inherited from sale order)
-
-# Email Threading
-email_thread_id: Char (inherited from sale order)
-email_thread_message_id: Char
-email_thread_subject: Char
-source_sale_order_id: Many2one 'sale.order'
-
-# Approval Tracking
-approved_by: Many2one 'res.users' (inherited from SO)
-credit_approved_by: Many2one 'res.users' (inherited from SO)
-pt_approved_by: Many2one 'res.users' (inherited from SO)
-```
-
-</details>
-
-### account.move.line (Invoice Line)
-
-<details>
-<summary><b>Show All Custom Fields</b></summary>
-
-```yaml
-# Sequence
-sequence: Integer (auto-numbered)
-
-# Margin (Restricted Access)
-purchase_price: Monetary (product cost)
-margin: Monetary (computed - visible to "Show Invoice Margin" group)
-margin_percentage: Float (computed - visible to "Show Invoice Margin" group)
-```
-
-</details>
-
----
-
-## 🔐 Security Groups
-
-### Custom Security Groups
-
-| Group | Technical Name | Access |
-|-------|---------------|--------|
-| **Multi Approval Manager** | `group_multi_approval_manager` | Configure approval workflows |
-| **Approve/Reject Partners** | `group_approve_reject_partner` | Approve/reject partner requests |
-| **Approve/Reject Product** | `group_product_approve` | Approve/reject product requests |
-| **Sales Order Gross Profit Approver** | `group_sales_approve_group` | Approve GP margin validations |
-| **Sales Order Credit Limit Approver** | `group_sales_credit_approve_group` | Approve credit limit validations |
-| **Sales Order Payment Term Approver** | `group_sales_payment_term_approve_group` | Approve payment term validations |
-| **Sales Order All Validations Approver** | `group_sales_all_validations_approve_group` | Approve all validations at once |
-| **Show Invoice Margin** | `group_account_invoice_margin_security` | View cost and margin on invoices |
-
-### Assigning Groups
-
-`Settings → Users & Companies → Users → [User] → Access Rights Tab`
-
-Check appropriate groups to grant access.
-
----
-
-## ⚙️ Configuration Checklist
-
-Before using custom features, complete these configurations:
+**Before You Start Using the System:**
 
 - [ ] **Approval Configurations** (`Settings → Multi Approvals`)
-  - [ ] Partner approval configuration (1, 2, or 3 levels)
-  - [ ] Product approval configuration (1, 2, or 3 levels)
-  - [ ] Add users to each approval level
+  - [ ] Partner approval (select number of levels, add approvers)
+  - [ ] Product approval (select number of levels, add approvers)
 
 - [ ] **Partner Settings** (`Settings → General Settings`)
-  - [ ] Partner Document Validate Period (days)
+  - [ ] Set document validation period (days)
 
 - [ ] **Master Data** (`Settings → Lablink Configuration`)
-  - [ ] Business Nature entries
-  - [ ] Customer Type SSCL entries
+  - [ ] Add Business Nature entries (Hospital, Lab, etc.)
+  - [ ] Add Customer Type SSCL entries
 
-- [ ] **Product Configuration**
-  - [ ] Product Brands (`Inventory → Configuration → Brands`)
-  - [ ] Product Categories with codes and GP margins
-  - [ ] Availability options (`Sales → Configuration → Availability`)
+- [ ] **Product Setup**
+  - [ ] Create Brands (`Inventory → Configuration → Brands`)
+  - [ ] Add Category Codes and GP Margins to categories
+  - [ ] Add Availability options (`Sales → Configuration → Availability`)
+  - [ ] Create Priority levels (`Sales → Configuration → Sale Order Priority`)
 
-- [ ] **Sales Configuration**
-  - [ ] Sale Order Priority levels (`Sales → Configuration → Sale Order Priority`)
-  - [ ] Sales Validations (`Settings → Sales`)
-    - [ ] Enable GP Margin Validation + Company GP Margin %
-    - [ ] Enable Credit Limit Validation
-    - [ ] Enable Payment Terms Validation
+- [ ] **Sales Validations** (`Settings → Sales`)
+  - [ ] Enable GP Margin (set company %)
+  - [ ] Enable Credit Limit
+  - [ ] Enable Payment Terms
 
-- [ ] **CRM Configuration** (`Settings → CRM Settings`)
-  - [ ] State After Quotation Creation
-  - [ ] State After Sale Order Confirmation
-  - [ ] Auto-close leads settings
+- [ ] **CRM Automation** (`Settings → CRM Settings`)
+  - [ ] Set stage after quotation creation
+  - [ ] Set stage after order confirmation
+  - [ ] Configure auto-close (if needed)
 
-- [ ] **Tax Configuration** (`Accounting → Configuration → Taxes`)
-  - [ ] VAT 18% (VAT Type: vat)
-  - [ ] SVAT 8% (VAT Type: svat)
-  - [ ] GST taxes (VAT Type: gst)
-  - [ ] Other taxes (VAT Type: other)
+- [ ] **Tax Setup** (`Accounting → Configuration → Taxes`)
+  - [ ] Create VAT 18% (VAT Type: vat)
+  - [ ] Create SVAT 8% (VAT Type: svat)
+  - [ ] Create other tax types as needed
 
-- [ ] **Security Groups** (`Settings → Users`)
-  - [ ] Assign users to approval groups
-  - [ ] Assign users to validation approver groups
-  - [ ] Assign finance team to "Show Invoice Margin" group
+- [ ] **User Access** (`Settings → Users`)
+  - [ ] Assign approver groups
+  - [ ] Assign validation approver groups
 
----
+### Common Tasks Quick Guide
 
-## 🔧 Common Customization Scenarios
+#### Creating an Approved Partner
 
-### Scenario 1: Product Cannot Be Added to Sales Order
+1. Contacts → Create
+2. Fill all details including LabLink fields
+3. Upload documents (recommended)
+4. Click "Request For Approval"
+5. Wait for approval
+6. If "Pending Document" → Upload docs → Click "State For Approved"
 
-**Symptom:**
-```
-Error: Product must be approved before use in transactions.
-```
+#### Creating an Approved Product
 
-**Cause:** Product is in draft or waiting_approve state.
+1. Products → Create
+2. Fill all details
+3. **Upload Product Catalogs** (mandatory!)
+4. Click "Request For Approval"
+5. Wait for approval
+6. Product becomes available in transactions
 
-**Solution:**
-1. Open product
-2. Upload product catalogs (if not done)
-3. Click `Request For Approval`
-4. Wait for approver to approve
-5. Product status → `approved`
-6. Now can add to sales order
+#### Creating Quotation with Email Threading
 
-### Scenario 2: Partner Status Shows "Pending Document"
+1. Create CRM Lead
+2. **Send first email from lead** (important!)
+3. Click "New Quotation" in lead
+4. Add approved products
+5. Send quotation (continues email thread)
+6. All future emails stay in same thread
 
-**Symptom:**
-```
-Partner Status: Pending Document
-```
+#### Confirming Order with Validations
 
-**Cause:** Partner approved but documents not uploaded within grace period.
+1. Click "Confirm"
+2. If blocked (status: Pending):
+   - Click appropriate approval button
+   - Select approver
+   - Send request
+3. After approval → Click "Confirm" again
+4. Order confirmed
 
-**Solution:**
-1. Upload documents to partner:
-   - Business Reg Attachments
-   - VAT Reg Attachments
-   - Customer Reg Attachments
-2. Click `State For Approved` button
-3. Status changes to `Approved`
+### User Role Responsibilities
 
-### Scenario 3: Sales Order Stuck in "Pending"
+#### Approvers
 
-**Symptom:**
-```
-Order Status: Pending
-Cannot confirm order
-```
+**Daily Tasks:**
+- Review pending partner approvals
+- Review pending product approvals
+- Review pending sales validations
+- Approve or reject with clear reasons
 
-**Cause:** Sales validation(s) triggered, waiting for approval.
+**Access:** `Settings → Users → [Your User] → Access Rights Tab`
+- Check relevant approver groups
 
-**Solution:**
-1. Check which validation triggered:
-   - GP Margin: `triggered_gp_margin_validation = True`
-   - Credit Limit: `triggered_credit_limit_validation = True`
-   - Payment Terms: `triggered_payment_term_validation = True`
-2. Click appropriate approval button:
-   - `Send for GP Margin Approval`
-   - `Send for Credit Limit Approval`
-   - `Send for Payment Term Approval`
-   - OR `Send for All Validations Approval`
-3. Approver approves
-4. Status changes to `Approved`
-5. Click `Confirm` again
-6. Order confirmed
+#### Sales Team
 
-### Scenario 4: Wrong Tax Applied
+**Using Custom Features:**
+- Create leads and send initial email
+- Create quotations from leads (for threading)
+- Use price history when quoting
+- Set priority levels on urgent orders
+- Handle validation approvals when needed
 
-**Symptom:**
-```
-Government customer getting VAT 18% instead of SVAT 8%
-```
+#### Finance Team
 
-**Solution:**
-1. Check partner VAT type: `Contacts → Partner → vat_type`
-2. Change to `SVAT`
-3. On sales order, change `VAT Type` field to `SVAT`
-4. All line taxes recalculate automatically
+**Monitoring:**
+- Credit limit status
+- Overdue payments
+- GP margins on orders
+- Tax types on orders
+- Approval validations
 
-### Scenario 5: Email Thread Not Continuing
+#### Administrators
 
-**Symptom:**
-```
-Quotation email starts new thread instead of continuing lead thread
-```
-
-**Cause:** Quotation not created from lead, or lead has no email thread info.
-
-**Solution:**
-1. Send at least one email from lead first (captures Message-ID and subject)
-2. Create quotation using `New Quotation` button from lead (not manually)
-3. Quotation inherits thread info automatically
-4. All subsequent emails continue same thread
+**Setup & Maintenance:**
+- Configure all approval workflows
+- Maintain master data
+- Manage user access
+- Monitor system health
+- Provide user support
 
 ---
 
-## 📚 Technical Notes
+## 🔧 Troubleshooting Common Issues
 
-### Module Dependencies
+### "Cannot add product to order"
 
-```yaml
-Core Framework:
-  - centrics_approval_process_base
-    → centrics_multi_level_approval_process
-      → centrics_partner_multi_approval_process
-      → centrics_product_approval_process
+**Problem:** Error message about unapproved product
 
-LabLink Extensions:
-  - lablink_base_extend
-    → lablink_crm_extend
-    → lablink_sales_extend
-    → lablink_custom_development
-  - lablink_mail_thread (standalone)
+**Solution:**
+1. Check product status (should be "Approved")
+2. If not approved:
+   - Upload product catalogs
+   - Request approval
+   - Wait for approval
+3. Try again
 
-Supporting Modules:
-  - sales_validations (depends on sale_margin, product_margin)
-  - local_tax_config (depends on sale, account)
-  - bi_product_brand (depends on sale, stock, product)
-  - one2many_sequence_sf (depends on sale, purchase, account, stock)
-```
+### "Partner status: Pending Document"
 
-### Installation Order
+**Problem:** Partner approved but shows pending document warning
 
-For clean installation:
+**Solution:**
+1. Upload missing documents
+2. Click "State For Approved" button
+3. Status changes to "Approved"
 
-1. `centrics_approval_process_base`
-2. `centrics_multi_level_approval_process`
-3. `bi_product_brand`
-4. `one2many_sequence_sf`
-5. `lablink_base_extend`
-6. `centrics_partner_multi_approval_process`
-7. `centrics_product_approval_process`
-8. `lablink_crm_extend`
-9. `lablink_custom_development`
-10. `local_tax_config`
-11. `lablink_sales_extend`
-12. `sales_validations`
-13. `lablink_mail_thread`
+### "Order stuck in Pending"
 
+**Problem:** Can't confirm order, status shows "Pending"
 
-## 📄 Document Information
+**Solution:**
+1. Check which validation triggered (GP/Credit/Payment)
+2. Click appropriate approval button
+3. Select approver and send
+4. Wait for approval
+5. Click "Confirm" again
 
-| Field | Value |
-|-------|-------|
-| **Document** | LabLink Custom Developments Manual |
-| **Odoo Version** | 18.0 |
-| **Last Updated** | 2025-01-18 |
-| **Version** | 1.0 |
-| **Prepared By** | Centrics Development Team |
+### "Wrong tax applied"
+
+**Problem:** Order showing VAT instead of SVAT (or vice versa)
+
+**Solution:**
+1. Check customer's VAT Type
+2. Change if wrong
+3. In order, change "VAT Type" field
+4. Taxes recalculate automatically
+
+### "Email thread not working"
+
+**Problem:** Emails not grouped in customer's inbox
+
+**Solution:**
+- **Always** send first email from lead before creating quotation
+- **Always** use "New Quotation" button from lead (don't create manually)
+- Check that email was sent from lead first
+
+### "Credit limit exceeded"
+
+**Problem:** Cannot confirm order due to credit limit
+
+**Solutions:**
+- **Option 1:** Increase customer's credit limit
+- **Option 2:** Send for credit limit approval (approver accepts risk)
+- **Option 3:** Collect payment first to free up credit
+
+---
+
+## 📞 Getting Help
+
+### Training Resources
+
+- **This User Guide** - Your primary reference
+- **LabLink Complete Flowchart Guide** - Visual workflows
+- **Your System Administrator** - For configuration issues
+
+### Support
+
+**Before Contacting Support:**
+1. Check this guide
+2. Try the troubleshooting section
+3. Ask your administrator
+
+**When Contacting Support, Provide:**
+- Clear description of the issue
+- What you were trying to do
+- Screenshots if possible
+- Error messages (if any)
+
+---
+
+## 📝 Summary
+
+### Key Points to Remember
+
+✓ **Approvals:**
+- Partners, products, and some sales orders need approval
+- Configure approval levels in Settings
+- Upload documents/catalogs before requesting approval
+
+✓ **Sales Features:**
+- Use price history for consistent pricing
+- Set priority on urgent orders
+- Validations may block confirmation - send for approval
+
+✓ **Email Threading:**
+- Always start from CRM lead
+- Send first email from lead
+- Create quotation from lead (not manually)
+
+✓ **Tax Types:**
+- Set customer VAT type
+- System applies correct tax automatically
+- Government = SVAT, Private = VAT
+
+✓ **Credit Monitoring:**
+- Watch "Pending Credit Days" field
+- Monitor credit limit status
+- Payment validation may block orders
 
 ---
 
 <div align="center">
 
-**For workflow diagrams and visual guides, see:**
-[LabLink_Workflows_Configuration_Guide.md](./LabLink_Workflows_Configuration_Guide.md)
+**You're Ready to Use LabLink's Custom Features!** ✓
+
+For visual flowcharts and detailed workflows, see:
+**[LabLink Complete Flowchart Guide](./LabLink_Complete_Flowchart_Guide.md)**
 
 ---
 
-![Odoo](https://img.shields.io/badge/Custom-Odoo_18-714B67?style=for-the-badge&logo=odoo&logoColor=white)
+![Odoo](https://img.shields.io/badge/LabLink-Custom_Features-714B67?style=for-the-badge&logo=odoo&logoColor=white)
+![User Friendly](https://img.shields.io/badge/User-Friendly-success?style=for-the-badge)
 
 </div>
