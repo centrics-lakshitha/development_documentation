@@ -1087,7 +1087,7 @@ Total: LKR 540,000
 **You're Ready to Use LabLink's Custom Features!** ✓
 
 For visual flowcharts and detailed workflows, see:
-**[LabLink Complete Flowchart Guide](./LabLink_Complete_Flowchart_Guide.md)**
+**[LabLink Complete Flowchart Guide](https://github.com/centrics-lakshitha/development_documentation/blob/main/lablink/Workflow/LABLINK_COMPLETE_FLOWCHART_GUIDE.md)**
 
 ---
 
